@@ -8,14 +8,19 @@ class Lali extends Animacio {
   }
 
   void reset() {
-    background(0);
+    background(bgColor);
   }
 
   void run() {
+    if(buttonS[1]){
+      bgColor = color(random(255), random(255), random(255));
+      buttonS[1]=false;
+    }
   }
 
   void display() {
-    if (buttonUp[1]) {
+    background(bgColor);
+    if (buttonM[1]) {
       ellipse(width/2, height/2, slider[1], slider[2]);
     }
   }
