@@ -61,9 +61,9 @@ void keyPressed() {
 }
 
 void controllerChange(int channel, int number, int value) {
-  //  println("Channel:"+channel);
-  //  println("Number:"+number);
-  //  println("Value:"+value);
+    println("Channel:"+channel);
+    println("Number:"+number);
+    println("Value:"+value);
 
   if (number/10 == 1) {
     slider[number%10] = value;
@@ -74,10 +74,10 @@ void controllerChange(int channel, int number, int value) {
   }
 
   if (number/10 == 3) {
-    buttonUp[number%10] = (value==1);
+    buttonUp[number%10] = (value!=0);
   }
 
   if (number/10 == 2) {
-    buttonDown[number%10] = (value==1);
+    buttonDown[number%10] = (value!=0);
   }
 }
