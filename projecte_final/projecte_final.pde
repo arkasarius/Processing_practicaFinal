@@ -14,11 +14,11 @@ boolean animationOn;
 // les variables son globals i es poden utilitzar dins de les classes
 // les funcions de gestio del MIDI s'han de cridar des de la classe principal
 MidiBus bus;
-int[] slider = new int[9];
-int[] knob = new int[9];
-boolean[] buttonR = new boolean[9];
-boolean[] buttonM = new boolean[9];
-boolean[] buttonS = new boolean[9];
+int[] slider = new int[10];
+int[] knob = new int[10];
+boolean[] buttonR = new boolean[10];
+boolean[] buttonM = new boolean[10;
+boolean[] buttonS = new boolean[10];
 
 color bgColor=0;
 
@@ -68,6 +68,9 @@ void controllerChange(int channel, int number, int value) {
   println("Number:"+number);
   println("Value:"+value);
 
+
+// ATENCIO: SLIDERS, KNOBS I BOTONS ESTAN NUMERATS DE 1 A 9 (EN LA CONTROLADORA VELLA) I DE 1 A 8 (EN LA NOVA).
+// DELS ARRAYS slider[], knob[], buttonX[] NO FEM SERVIR LA POSICIO 0, I AMB LA CONTROLADORA NOVA TAMPOC LA 9.
   if (number/10 == 1) {
     slider[number%10] = value;
   }
