@@ -58,13 +58,15 @@ void keyPressed() {
     case '1':
       a = new Lali("songLali.mp3");
       animationOn = true;
+      break;
     case '2':
       a = new Monica("songMonica.mp3");
       animationOn = true;
-      /*
+      break;
     case '3':
       a = new Mese("songMese.mp3");
-      animationOn = true;*/
+      animationOn = true;
+      break;
     }
   }
 }
