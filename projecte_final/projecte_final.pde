@@ -17,7 +17,7 @@ MidiBus bus;
 int[] slider = new int[10];
 int[] knob = new int[10];
 boolean[] buttonR = new boolean[10];
-boolean[] buttonM = new boolean[10;
+boolean[] buttonM = new boolean[10];
 boolean[] buttonS = new boolean[10];
 
 color bgColor=0;
@@ -59,6 +59,7 @@ void keyPressed() {
       a = new Lali("songLali.mp3");
       a.reset();
       animationOn = true;
+      break;
     }
   }
 }
