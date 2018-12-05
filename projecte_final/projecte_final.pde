@@ -57,7 +57,6 @@ void keyPressed() {
     switch(key) {
     case '1':
       a = new Lali("songLali.mp3");
-      a.reset();
       animationOn = true;
       break;
     }
