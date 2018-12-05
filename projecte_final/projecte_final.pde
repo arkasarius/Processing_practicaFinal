@@ -52,12 +52,12 @@ void draw() {
 
 void keyPressed() {
   if (animationOn) {
-  if(key == '0'){
-  song.close();
-  animationOn = false;
-  bgColor = 0;
-  }else{
-    a.f_keyPressed();
+    if (key == '0') {
+      song.close();
+      animationOn = false;
+      bgColor = 0;
+    } else {
+      a.f_keyPressed();
     }
   } else {
     switch(key) {
@@ -81,6 +81,10 @@ void keyPressed() {
       a = new Guillem("songGuillem.mp3");
       animationOn = true;
       break;
+    case '6':
+      a = new Pol("songPol.mp3");
+      animationOn = true;
+      break;
     }
   }
 }
@@ -91,8 +95,8 @@ void controllerChange(int channel, int number, int value) {
   println("Value:"+value);
 
 
-// ATENCIO: SLIDERS, KNOBS I BOTONS ESTAN NUMERATS DE 1 A 9 (EN LA CONTROLADORA VELLA) I DE 1 A 8 (EN LA NOVA).
-// DELS ARRAYS slider[], knob[], buttonX[] NO FEM SERVIR LA POSICIO 0, I AMB LA CONTROLADORA NOVA TAMPOC LA 9.
+  // ATENCIO: SLIDERS, KNOBS I BOTONS ESTAN NUMERATS DE 1 A 9 (EN LA CONTROLADORA VELLA) I DE 1 A 8 (EN LA NOVA).
+  // DELS ARRAYS slider[], knob[], buttonX[] NO FEM SERVIR LA POSICIO 0, I AMB LA CONTROLADORA NOVA TAMPOC LA 9.
   if (number/10 == 1) {
     slider[number%10] = value;
   }
