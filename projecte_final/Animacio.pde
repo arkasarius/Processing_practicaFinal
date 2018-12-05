@@ -32,7 +32,7 @@ abstract class Animacio {
   
   void f_mousePressed(){}
   
-  void f_mouseDrgged(){}
+  void f_mouseDragged(){}
   
   void f_mouseReleased(){}
 }
