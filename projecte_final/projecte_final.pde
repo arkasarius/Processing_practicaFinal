@@ -67,6 +67,14 @@ void keyPressed() {
       a = new Mese("songMese.mp3");
       animationOn = true;
       break;
+    case '4':
+      a = new Alex("songAlex.mp3");
+      animationOn = true;
+      break;
+    case '5':
+      a = new Guillem("songGuillem.mp3");
+      animationOn = true;
+      break;
     }
   }
 }
