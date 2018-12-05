@@ -52,7 +52,13 @@ void draw() {
 
 void keyPressed() {
   if (animationOn) {
+  if(key == '0'){
+  song.close();
+  animationOn = false;
+  bgColor = 0;
+  }else{
     a.f_keyPressed();
+    }
   } else {
     switch(key) {
     case '1':
