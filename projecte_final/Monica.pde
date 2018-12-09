@@ -8,6 +8,9 @@ class Monica extends Animacio {
   color boletes;
   float red, green, blue;
   float limits;
+  float fade;
+  boolean canFade;
+
 
   Monica(String nameSong) {
     super(nameSong);
@@ -26,6 +29,9 @@ class Monica extends Animacio {
     x = 0;
     y = 0;
     limits = 5;
+    fade = 0;
+    canFade = false;
+
 
     for (int i = 0; i<width; i++) {
       for (int j = 0; j<n+1; j++) {
@@ -54,16 +60,16 @@ class Monica extends Animacio {
       p.newVX = map(slider[2], 0, 127, -limits, limits);
     }
 
-    //SLIDER 3 VELOCITAT HORITZONTAL
+    //SLIDER 3 CANAL RED
     red = map(slider[3], 0, 127, 0, 255);
 
-    //SLIDER 4 VELOCITAT HORITZONTAL
+    //SLIDER 4 CANAL GREEN
     green = map(slider[4], 0, 127, 0, 255);
 
-    //SLIDER 5 VELOCITAT HORITZONTAL
+    //SLIDER 5 CANAL BLUE
     blue = map(slider[5], 0, 127, 0, 255);
-    
-    //SLIDER 6 VELOCITAT HORITZONTAL
+
+    //SLIDER 6 LIMITS VELOCITAT (per adequar-los al ritme de la cançó)
     limits = map(slider[6], 0, 127, 5, 20);
 
 
@@ -71,12 +77,12 @@ class Monica extends Animacio {
     for (Particle_mmj p : particleList) {
       p.rad = map(knob[1], 0, 127, 0, 50);
     }
-    
-    //CANVI COLOR
+
+    //CANVI COLOR (B&W)
     if (buttonS[1]) {
       for (Particle_mmj p : particleList) {
         if (p.cparticle == 255) {
-          p.cparticle=0; 
+          p.cparticle=0;
         } else {
           p.cparticle=255;
         }
@@ -84,7 +90,7 @@ class Monica extends Animacio {
       buttonS[1]=false;
     }
 
-    //CANVI FORMA
+    //CANVI FORMA (rodones, quadrats)
     if (buttonS[2]) {
       for (Particle_mmj p : particleList) {
         if (p.form == 0) {
@@ -96,7 +102,7 @@ class Monica extends Animacio {
       buttonS[2]=false;
     }
 
-    //CANVI MODE
+    //CANVI MODE (normal o sinusoide vertical)
     if (buttonS[3]) {
       for (Particle_mmj p : particleList) {
         if (p.mode == 0) {
@@ -105,103 +111,46 @@ class Monica extends Animacio {
           p.mode = 0;
         }
       }
-       buttonS[3]=false;
+      buttonS[3]=false;
     }
 
-    
+    /*
+    //FADE
+     if (buttonS[3]) {
+     canFade = true;
+     }
+     buttonS[3]=false;
+     }*/
   }
 
   void display() {
     bgColor = color(red, green, blue);
     background(bgColor);
+    fill(bgColor,80);
+    rect(0,0,width,height);
+ 
+
     for (int i = 0; i< width/n; i++) {
       Particle_mmj p = particleList.get(i);
       p.move(n);
       p.display(snareSize);
     }
+    /*
+    if(canFade == true){
+     fill(0,0,0,fade);
+     rect(0,0,width, height);
+     fade+=2;
+     }*/
   }
 
-/*
+
   void f_keyPressed() {
     switch(keyCode) {
-
-    case UP:
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        p.newVY = p.newVY + 1;
-      }
-      break;
-    case DOWN:
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        p.newVY = p.newVY - 1;
-      }
-      break;
-    case LEFT:
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        p.newVX = p.newVX + 1;
-      }
-      break;
-    case RIGHT:
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        p.newVX = p.newVX - 1;
-      }
-      break;
-
+      /*
     case 'f':
-    case 'F':
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        if (p.form == 0) {
-          p.form = 1;
-        } else {
-          p.form = 0;
-        }
-      }
-      break;
-
-    case 'm':
-    case 'M':
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        if (p.mode == 0) {
-          p.mode = 1;
-        } else {
-          p.mode = 0;
-        }
-      }
-      break;
-    case 'q':
-    case 'Q':
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        if (p.rad<=50) {
-          p.rad = p.rad + 1;
-        }
-      }
-      break;
-    case 'w':
-    case 'W':
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        if (p.rad>=0) {
-          p.rad = p.rad - 1;
-        }
-      }
-      break;
-    case 'o':
-    case 'O':
-      for (int i = 0; i< width/n; i++) {
-        Particle_mmj p = particleList.get(i);
-        if (p.cparticle == 255) {
-          p.cparticle=0;
-        } else {
-          p.cparticle=255;
-        }
-      }
-      break;
+       case 'F':
+       canFade = true;
+       break;*/
     }
-  }*/
+  }
 }
