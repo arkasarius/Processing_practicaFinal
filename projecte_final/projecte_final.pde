@@ -6,6 +6,7 @@ import ddf.minim.analysis.*;
 Minim minim;
 AudioPlayer song;
 BeatDetect beat;
+FFT fft;
 
 Animacio a;
 boolean animationOn;
@@ -23,8 +24,8 @@ boolean[] buttonS = new boolean[10];
 color bgColor=0;
 
 void setup() {
-  //size(1920, 1080);
-  fullScreen();
+  size(1920, 1080);
+  //fullScreen();
 
   // inicialitzem la Minim
   minim = new Minim(this);

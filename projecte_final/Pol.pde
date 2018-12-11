@@ -2,15 +2,17 @@ class Pol extends Animacio {
 
   Network nw;
   int numNodes = 1000;
+  boolean isDark = true;
 
   Pol(String nameSong) {
     super(nameSong);
     reset();  
     song.play();
+    fft = new FFT( song.bufferSize(), song.sampleRate() );
   }
 
   void reset() {
-    nw = new Network();
+    nw = new Network(isDark);
     float margin = 10;
     for (int i=0; i<numNodes; i++) {
       nw.addNode(random(margin, width-margin), random(margin, height-margin), 0, false);
@@ -19,7 +21,7 @@ class Pol extends Animacio {
   }
 
   void display() {
-    background(0);
+    background(isDark? 0 : 255);
 
     //nw.diffuse();
     //nw.wave();
@@ -34,9 +36,11 @@ class Pol extends Animacio {
 
 class Network {
   ArrayList<Node> nodes;
+  boolean isDark = true;
 
-  Network() {
+  Network(boolean isDark) {
     nodes = new ArrayList<Node>();
+    this.isDark = isDark;
   }
 
   void addNode(float x, float y, float s, boolean isFixed) {
@@ -47,6 +51,9 @@ class Network {
     a.connectTo(b);
     b.connectTo(a);
   }
+
+  // Todo: Relative neighbo ?rhood graph
+  // Todo: node lines smoothing
 
   // Minimum spanning tree
   void connectAll() {
@@ -61,7 +68,7 @@ class Network {
     unreached.remove(0);
 
     while (unreached.size() > 0) {
-      float minD = 100000;
+      float minD = 10000000;
       int minI = 0;
       int minJ = 0;
 
@@ -85,9 +92,30 @@ class Network {
 
   void display() {
     // Activate some node based on the music
-    int ri = (int)random(nodes.size());
+    /*int ri = (int)random(nodes.size());
+     float songLevel = song.mix.level();
+     nodes.get(ri).setVal(2*songLevel);*/
+
+    /*if(songLevel > 0.2) {
+     nodes.get(ri).setVal(1.0);
+     }*/
+
+    // FFT display
+    fft.forward( song.mix );
+    float maxFreq = 0;
+    int maxFreqI = 0;
+    for (int i = 0; i < fft.specSize(); i++) {
+      float freq = fft.getBand(i);
+      if (freq > maxFreq) {
+        maxFreq = freq;
+        maxFreqI = i;
+      }
+    }
+    int idx = (int)map(maxFreqI, 0, 1024, 0, nodes.size());
     float songLevel = song.mix.level();
-    nodes.get(ri).setVal(songLevel);
+    //if (songLevel>0.1) {
+      nodes.get(idx).setVal(1.0);
+    //}
 
     // Display links
     for (Node n : nodes) {
@@ -95,14 +123,30 @@ class Network {
         float val = (n.val + o.val)/2;
         boolean isPositive = val >= 0;
         float mag = abs(val);
-        stroke(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
+        if (isDark) {
+          //stroke(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
+          stroke(isPositive? 255*mag : 0);
+        } else {
+          stroke(isPositive? 255*(1-mag) : 255);
+        }
+        strokeWeight(3);
         line(n.p.x, n.p.y, o.p.x, o.p.y);
       }
     }
 
     // Display nodes
     for (Node n : nodes) {
-      n.display();
+      boolean isPositive = n.val >= 0;
+      float mag = abs(n.val);
+
+      if (isDark) {
+        //fill(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
+        fill(isPositive? 255*mag : 0);
+      } else {
+        fill(isPositive? 255*(1-mag) : 255);
+      }
+      noStroke();
+      ellipse(n.p.x, n.p.y, 8, 8);
     }
   }
 
@@ -148,15 +192,6 @@ class Node {
     p = new PVector(x, y);
     coNodes = new ArrayList<Node>();
     this.isFixed = isFixed;
-  }
-
-  void display() {
-    boolean isPositive = val >= 0;
-    float mag = abs(val);
-    fill(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
-
-    noStroke();
-    ellipse(p.x, p.y, 5, 5);
   }
 
   void connectTo(Node o) {
