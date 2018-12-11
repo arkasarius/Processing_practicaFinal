@@ -29,8 +29,8 @@ class Monica extends Animacio {
     x = 0;
     y = 0;
     limits = 5;
-    fade = 0;
-    canFade = false;
+   fade = 0;
+   canFade = false;
 
 
     for (int i = 0; i<width; i++) {
@@ -113,14 +113,6 @@ class Monica extends Animacio {
       }
       buttonS[3]=false;
     }
-
-    /*
-    //FADE
-     if (buttonS[3]) {
-     canFade = true;
-     }
-     buttonS[3]=false;
-     }*/
   }
 
   void display() {
@@ -135,22 +127,28 @@ class Monica extends Animacio {
       p.move(n);
       p.display(snareSize);
     }
-    /*
+    
     if(canFade == true){
+     rectMode(CORNER);
      fill(0,0,0,fade);
      rect(0,0,width, height);
      fade+=2;
-     }*/
+     }
   }
 
 
   void f_keyPressed() {
     switch(keyCode) {
-      /*
+      
     case 'f':
        case 'F':
        canFade = true;
-       break;*/
-    }
+       break;
+       case 'p': 
+       case 'P':
+       println(width + " "+height);
+        break; 
+  }
+    
   }
 }

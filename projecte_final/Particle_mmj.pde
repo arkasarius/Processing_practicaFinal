@@ -44,15 +44,15 @@ class Particle_mmj {
     }
 
     if (posY < 0-height/n) {
-      posY = height+height/n;
+      posY = (float)height+height/n;
     } else if (posY > height+height/n) {
-      posY = -height/n;
+      posY = (float)-height/n;
     }
 
     if (posX < 0-width/n) {
-      posX = width+width/n;
+      posX = (float)width+width/n;
     } else if (posX > width+width/n) {
-      posX = -width/n;
+      posX = (float)-width/n;
     }
   }
 
