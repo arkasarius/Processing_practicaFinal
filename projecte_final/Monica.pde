@@ -29,8 +29,9 @@ class Monica extends Animacio {
     x = 0;
     y = 0;
     limits = 5;
-   fade = 0;
+   fade = 255;
    canFade = false;
+
 
 
     for (int i = 0; i<width; i++) {

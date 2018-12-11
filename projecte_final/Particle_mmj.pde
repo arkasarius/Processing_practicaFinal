@@ -15,11 +15,11 @@ class Particle_mmj {
   Particle_mmj(float x, float y, int t) {
     posX = x;
     posY = y;
-    newVX = 0;
-    newVY = 1;
+    newVX = map(slider[1], 0, 127, -5, 5);
+    newVY = map(slider[2], 0, 127, -5, 5);
     velX = newVX;
     velY = newVY;
-    rad = 10;
+    rad = map(knob[1], 0, 127, 0, 50);
     type = t;
     mode = 0;
     form = 0;
@@ -37,21 +37,21 @@ class Particle_mmj {
       alfa = 0;
     } else if (mode == 1) {
       alfa += 1;
-      posX = posX+sin(alfa)*velX*0.5;
-      posY=posY+velY;
+      posX = (float)posX+sin(alfa)*20*0.5;
+      posY=(float)posY+velY;
       velX = newVX*type;
       velY = newVY*type;
     }
 
-    if (posY < 0-height/n) {
+    if (posY <= (float)0-height/n) {
       posY = (float)height+height/n;
-    } else if (posY > height+height/n) {
+    } else if (posY >= (float)height+height/n) {
       posY = (float)-height/n;
     }
 
-    if (posX < 0-width/n) {
+    if (posX <= (float)0-width/n) {
       posX = (float)width+width/n;
-    } else if (posX > width+width/n) {
+    } else if (posX >= (float)width+width/n) {
       posX = (float)-width/n;
     }
   }
