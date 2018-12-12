@@ -1,21 +1,24 @@
-class Walker_mgd{
-  
-  color origen, fi, c1, c2, relleno;
+class Walker_mgd {
+
   PVector pos, vel, acc; 
   boolean muerto; 
+  float radi, velocitat; 
+  color c;
 
-  Walker_mgd() {
-    setColor();
+  Walker_mgd(color col) {
     pos = new PVector(width/2, height/2);
-    vel = new PVector(2, -1.5);
-    acc = new PVector(0.5, -0.8);
+    vel = new PVector(random(-1, 1), random(-1, 1));
+    acc = new PVector(0, 0);
     muerto = false;
+    c=col;
+    stroke(c);
   }
 
   void moviment(float kickSize, float snareSize, float hatSize) {
 
     vel.add(acc);
-    vel.limit(1.5);
+    vel.mult(velocitat);
+    vel.limit(5);
     pos.add(vel);
     acc.x = acc.x + (kickSize);
     acc.y= acc.y -(kickSize);
@@ -33,7 +36,8 @@ class Walker_mgd{
     if (hatSize!=0) {
       if (dir == 2) {
         pos.y+=hatSize;
-      } if(dir ==3){
+      } 
+      if (dir ==3) {
         pos.y-=hatSize;
       }
     }
@@ -41,48 +45,31 @@ class Walker_mgd{
 
   void limits() {
     if (pos.x > width || pos.x <0) {
-      muerto = true; 
+      muerto = true;
     }
-
     if (pos.y > height || pos.y < 0) {
       muerto = true;
     }
   }
 
+  void dibuixa(float kickSize, int type) {
+    ellipseMode(RADIUS);
+    fill(c);
+    noStroke();
 
-  void setColor() {
-    origen = color(255, 255, 25); 
-    fi = color(50, 255, 255);
-    c1  = lerpColor(origen, fi, 0.3); 
-    c2 = lerpColor(origen, fi, 0.7); 
-
-    int colorDice = (int) random(0, 4);
-
-    if (colorDice == 0) { 
-      relleno = origen;
+    if (type == 1) {
+      quadrats(kickSize);
     }
-    if (colorDice == 1) { 
-      relleno = c1;
-    }
-    if (colorDice == 2) { 
-      relleno = c2;
-    }
-    if (colorDice == 3) { 
-      relleno = fi;
+    if (type == 2) {
+      ellipses(kickSize);
     }
   }
 
-  void dibuixa(float kickSize,int type) {
-    ellipseMode(RADIUS);
-    fill(relleno);
-    noStroke();
-    
-    if(type == 1){
-    rect(pos.x, pos.y, 20+(kickSize*0.5), 20+(kickSize*0.5));
-    }
-    
-    if(type == 2){
-      ellipse(pos.x, pos.y, 20+(kickSize*0.5), 20+(kickSize*0.5));
-    }
+  void quadrats(float kickSize) {
+    rect(pos.x, pos.y, 10+(kickSize*0.5)+radi, 10+(kickSize*0.5)+radi);
+  }
+
+  void ellipses(float kickSize) {
+    ellipse(pos.x, pos.y, 5+(kickSize*0.4)+radi, 5+(kickSize*0.4)+radi);
   }
 }
