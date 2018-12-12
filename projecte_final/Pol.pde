@@ -21,6 +21,11 @@ class Pol extends Animacio {
   }
 
   void display() {
+    /*float songLevel = song.mix.level();
+     translate(width/2, height/2);
+     scale(1 + 0.2*songLevel);
+     translate(-width/2, -height/2);*/
+
     background(isDark? 0 : 255);
 
     //nw.diffuse();
@@ -101,20 +106,21 @@ class Network {
      }*/
 
     // FFT display
+    float freqThreshold = 10;
     fft.forward( song.mix );
-    float maxFreq = 0;
-    int maxFreqI = 0;
+    IntList topFreq = new IntList();
     for (int i = 0; i < fft.specSize(); i++) {
       float freq = fft.getBand(i);
-      if (freq > maxFreq) {
-        maxFreq = freq;
-        maxFreqI = i;
+      if (freq > freqThreshold) {
+        topFreq.append(i);
       }
     }
-    int idx = (int)map(maxFreqI, 0, 1024, 0, nodes.size());
     float songLevel = song.mix.level();
-    //if (songLevel>0.1) {
-      nodes.get(idx).setVal(1.0);
+    //if (songLevel > 0.05) {
+    for (int i : topFreq) {
+      int idx = (int)map(i, 0, 1024, 0, nodes.size());
+      nodes.get(idx).setVal(min(5*songLevel, 1));
+    }
     //}
 
     // Display links
@@ -124,8 +130,8 @@ class Network {
         boolean isPositive = val >= 0;
         float mag = abs(val);
         if (isDark) {
-          //stroke(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
-          stroke(isPositive? 255*mag : 0);
+          stroke(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
+          //stroke(isPositive? 255*mag : 0);
         } else {
           stroke(isPositive? 255*(1-mag) : 255);
         }
@@ -135,13 +141,17 @@ class Network {
     }
 
     // Display nodes
-    for (Node n : nodes) {
+    for (int i=0; i<nodes.size(); i++) {
+      Node n = nodes.get(i);
+      n.rotate(0.05*frameCount + i);
+      //n.displace(songLevel);
+
       boolean isPositive = n.val >= 0;
       float mag = abs(n.val);
 
       if (isDark) {
-        //fill(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
-        fill(isPositive? 255*mag : 0);
+        fill(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
+        //fill(isPositive? 255*mag : 0);
       } else {
         fill(isPositive? 255*(1-mag) : 255);
       }
@@ -177,7 +187,7 @@ class Network {
 
 class Node {
   float val, val_1, val_2;
-  PVector p;
+  PVector p0, p;
   ArrayList<Node> coNodes;
   boolean isFixed;
 
@@ -189,6 +199,7 @@ class Node {
   Node(float x, float y, float value, boolean isFixed) {
     val = value;
     val_1 = value;
+    p0 = new PVector(x, y);
     p = new PVector(x, y);
     coNodes = new ArrayList<Node>();
     this.isFixed = isFixed;
@@ -202,6 +213,18 @@ class Node {
     val = value;
     val_1 = value;
     val_2 = value;
+  }
+
+  void displace(float medLevel) {
+    PVector rel = new PVector(p0.x-0.5*width, p0.y-0.5*height);
+    float d = rel.magSq();
+    rel.setMag(50*(medLevel+1.0)*pow(2, -d/500000));
+    p.set(PVector.add(p0, rel));
+  }
+
+  void rotate(float a) {
+    PVector rel = PVector.fromAngle(a).mult(10);
+    p.set(PVector.add(p0, rel));
   }
 
   void diffuse() {

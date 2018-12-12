@@ -83,7 +83,7 @@ void keyPressed() {
       animationOn = true;
       break;
     case '6':
-      a = new Pol("songPol.mp3");
+      a = new Pol("songPol1.mp3");
       animationOn = true;
       break;
     }
