@@ -2,6 +2,7 @@ import themidibus.*;
 
 import ddf.minim.*;
 import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
 
 Minim minim;
 AudioPlayer song;
