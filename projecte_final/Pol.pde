@@ -2,38 +2,65 @@ class Pol extends Animacio {
 
   Network nw;
   int numNodes = 1000;
-  boolean isDark = true;
+  PImage img;
+  int startTime = 0;
 
   Pol(String nameSong) {
     super(nameSong);
-    reset();  
     song.play();
     fft = new FFT( song.bufferSize(), song.sampleRate() );
+    img = loadImage("imgPol.jpg");
+    reset();
+    startTime = millis();
   }
 
   void reset() {
-    nw = new Network(isDark);
-    float margin = 10;
+    nw = new Network();
+    img.loadPixels();
     for (int i=0; i<numNodes; i++) {
-      nw.addNode(random(margin, width-margin), random(margin, height-margin), 0, false);
+      color imgc = img.pixels[(int)random(0, img.width*img.height-1)];
+      float maxR = dist(0, 0, 0.5*width, 0.5*height);
+      float r = 0.9*0.5*height * sqrt(random(1.0));
+      float a = random(TAU);
+      nw.addNode(0.5*width + r*cos(a), 0.5*height + r*sin(a), 0, false, imgc);
     }
     nw.connectAll();
+    //song.skip(50000);
   }
 
   void display() {
-    /*float songLevel = song.mix.level();
-     translate(width/2, height/2);
-     scale(1 + 0.2*songLevel);
-     translate(-width/2, -height/2);*/
+    int myMillis = millis()-startTime;
 
-    background(isDark? 0 : 255);
+    background(0);
 
-    //nw.diffuse();
-    //nw.wave();
+    //fill(0, 100);
+    //rect(0, 0, width, height);
+
+    translate(width/2, height/2);
+    rotate(millis()/30000.0);
+    //scale(min(myMillis/70000.0 + 0.2, 1.0));
+    translate(-width/2, -height/2);
+
     nw.advect();
     nw.damp();
 
+    nw.move(true);
     nw.display();
+
+    if (song.position() > 56000) {
+      nw.displayColor = true;
+    }
+
+    if (song.position() > 187900) {
+      song.pause();
+      animationOn = false;
+    }
+
+    if (song.position() > 180000) {
+      float f = map(song.position(), 180000, 187900, 0, 255);
+      fill(0, f);
+      rect(0, 0, width, height);
+    }
 
     //println(frameRate);
   }
@@ -41,24 +68,20 @@ class Pol extends Animacio {
 
 class Network {
   ArrayList<Node> nodes;
-  boolean isDark = true;
+  boolean displayColor = false;
 
-  Network(boolean isDark) {
+  Network() {
     nodes = new ArrayList<Node>();
-    this.isDark = isDark;
   }
 
-  void addNode(float x, float y, float s, boolean isFixed) {
-    nodes.add(new Node(x, y, s, isFixed));
+  void addNode(float x, float y, float s, boolean isFixed, color c) {
+    nodes.add(new Node(x, y, s, isFixed, c));
   }
 
   void connectNodes(Node a, Node b) {
     a.connectTo(b);
     b.connectTo(a);
   }
-
-  // Todo: Relative neighbo ?rhood graph
-  // Todo: node lines smoothing
 
   // Minimum spanning tree
   void connectAll() {
@@ -96,17 +119,8 @@ class Network {
   }
 
   void display() {
-    // Activate some node based on the music
-    /*int ri = (int)random(nodes.size());
-     float songLevel = song.mix.level();
-     nodes.get(ri).setVal(2*songLevel);*/
-
-    /*if(songLevel > 0.2) {
-     nodes.get(ri).setVal(1.0);
-     }*/
-
     // FFT display
-    float freqThreshold = 10;
+    float freqThreshold = 5; //15
     fft.forward( song.mix );
     IntList topFreq = new IntList();
     for (int i = 0; i < fft.specSize(); i++) {
@@ -116,59 +130,48 @@ class Network {
       }
     }
     float songLevel = song.mix.level();
-    //if (songLevel > 0.05) {
     for (int i : topFreq) {
       int idx = (int)map(i, 0, 1024, 0, nodes.size());
-      nodes.get(idx).setVal(min(5*songLevel, 1));
+      nodes.get(idx).setVal(min(5*songLevel, 0.999));
     }
-    //}
 
     // Display links
     for (Node n : nodes) {
       for (Node o : n.coNodes) {
         float val = (n.val + o.val)/2;
-        boolean isPositive = val >= 0;
-        float mag = abs(val);
-        if (isDark) {
-          stroke(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
-          //stroke(isPositive? 255*mag : 0);
+        if (displayColor) {
+          stroke(lerpColor(n.col, o.col, 0.5), 255*val);
         } else {
-          stroke(isPositive? 255*(1-mag) : 255);
+          stroke(255, 255*val);
         }
-        strokeWeight(3);
+
         line(n.p.x, n.p.y, o.p.x, o.p.y);
       }
     }
 
     // Display nodes
-    for (int i=0; i<nodes.size(); i++) {
-      Node n = nodes.get(i);
-      n.rotate(0.05*frameCount + i);
-      //n.displace(songLevel);
+    noStroke();
+    for (Node n : nodes) {
+      float val = n.val;
 
-      boolean isPositive = n.val >= 0;
-      float mag = abs(n.val);
-
-      if (isDark) {
-        fill(isPositive? 255*mag : 0, 255*mag, isPositive? 0 : 255*mag);
-        //fill(isPositive? 255*mag : 0);
+      if (displayColor) {
+        fill(n.col, 255*val);
       } else {
-        fill(isPositive? 255*(1-mag) : 255);
+        fill(255, 255*val);
       }
-      noStroke();
-      ellipse(n.p.x, n.p.y, 8, 8);
+
+      ellipse(n.p.x, n.p.y, n.val*15, n.val*15);
     }
   }
 
-  void diffuse() {
+  void move(boolean isCos) {
+    float songLevel = song.mix.level();
     for (Node n : nodes) {
-      n.diffuse();
-    }
-  }
-
-  void wave() {
-    for (Node n : nodes) {
-      n.wave();
+      if (isCos) {
+        n.moveCos(songLevel);
+      } else {
+        n.moveExp(songLevel);
+      }
     }
   }
 
@@ -189,20 +192,20 @@ class Node {
   float val, val_1, val_2;
   PVector p0, p;
   ArrayList<Node> coNodes;
-  boolean isFixed;
+  color col;
 
   float kdi = 0.1;
   float kwa = 0.01;
   float kad = 0.2;
   float kda = 0.1;
 
-  Node(float x, float y, float value, boolean isFixed) {
+  Node(float x, float y, float value, boolean isFixed, color c) {
     val = value;
     val_1 = value;
     p0 = new PVector(x, y);
     p = new PVector(x, y);
     coNodes = new ArrayList<Node>();
-    this.isFixed = isFixed;
+    col = c;
   }
 
   void connectTo(Node o) {
@@ -215,52 +218,22 @@ class Node {
     val_2 = value;
   }
 
-  void displace(float medLevel) {
+  void moveCos(float medLevel) {
+    float songPos = song.position();
+    float ampA = (songPos > 56000)? 50 : 0;
+    float ampB = min(20, songPos/3000.0);
+
+    PVector rel = new PVector(p0.x-0.5*width, p0.y-0.5*height);
+    float d = rel.magSq();
+    rel.setMag(ampA*medLevel*(cos(d*TAU/500000.0)) + ampB*(0.5*cos(TAU*millis()/1500.0)+0.5));
+    p.set(PVector.add(p0, rel));
+  }
+
+  void moveExp(float medLevel) {
     PVector rel = new PVector(p0.x-0.5*width, p0.y-0.5*height);
     float d = rel.magSq();
     rel.setMag(50*(medLevel+1.0)*pow(2, -d/500000));
     p.set(PVector.add(p0, rel));
-  }
-
-  void rotate(float a) {
-    PVector rel = PVector.fromAngle(a).mult(10);
-    p.set(PVector.add(p0, rel));
-  }
-
-  void diffuse() {
-    if (isFixed) return;
-
-    int N = coNodes.size();
-
-    float sum = 0;
-    for (Node o : coNodes) {
-      sum += o.val_1;
-    }
-
-    val = val_1 + kdi*(sum/(N) - N*val_1);
-
-    if (val > 0.3) {
-      setVal(1);
-    }
-
-    val_2 = val_1;
-    val_1 = val;
-  }
-
-  void wave() {
-    if (isFixed) return;
-
-    int N = coNodes.size();
-
-    float sum = 0;
-    for (Node o : coNodes) {
-      sum += o.val_1;
-    }
-
-    val = constrain(2*val_1 - val_2 + kwa*(sum/(N+0.0001) - N*val_1), -1, 1);
-
-    val_2 = val_1;
-    val_1 = val;
   }
 
   void advect() {
@@ -268,7 +241,7 @@ class Node {
     for (Node o : coNodes) {
       sum += pow(o.val_1 - val_1, 2);
     }
-    sum = sqrt(sum); // Més efficient la suma de valors absoluts ?
+    sum = sqrt(sum);
 
     val = constrain(val_1 + kad*(sum), -1, 1);
 

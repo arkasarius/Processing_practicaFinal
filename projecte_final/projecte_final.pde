@@ -24,8 +24,8 @@ boolean[] buttonS = new boolean[10];
 color bgColor=0;
 
 void setup() {
-  size(1920, 1080);
-  //fullScreen();
+  //size(1920, 1080);
+  fullScreen();
 
   // inicialitzem la Minim
   minim = new Minim(this);
@@ -83,7 +83,7 @@ void keyPressed() {
       animationOn = true;
       break;
     case '6':
-      a = new Pol("songPol1.mp3");
+      a = new Pol("songPol.mp3");
       animationOn = true;
       break;
     }
