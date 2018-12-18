@@ -24,6 +24,16 @@ boolean[] buttonS = new boolean[10];
 
 color bgColor=0;
 
+
+///roger ;D
+
+particle[] p;
+ArrayList<particle> par=  new ArrayList();
+ArrayList<PVector> points=  new ArrayList();
+int number=1;
+int limit=1125;
+///
+
 void setup() {
   //size(1920, 1080);
   fullScreen();
@@ -85,6 +95,10 @@ void keyPressed() {
       break;
     case '6':
       a = new Pol("songPol.mp3");
+      animationOn = true;
+      break;
+    case '7':
+      a = new Roger("songRoger.mp3");
       animationOn = true;
       break;
     }
