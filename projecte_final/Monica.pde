@@ -28,7 +28,7 @@ class Monica extends Animacio {
     x = 0;
     y = 0;
     nx=16;
-    ny=8;
+    ny=7;
     dx=width/(nx-1);
     dy=height/(ny-1);
     
