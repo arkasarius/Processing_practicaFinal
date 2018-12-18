@@ -5,7 +5,7 @@ class Mese extends Animacio {
   int type; 
   float radi;
   color c; 
-  boolean bg; 
+  boolean bg, bl; 
 
   Mese(String nameSong) {
     super(nameSong);
@@ -20,7 +20,8 @@ class Mese extends Animacio {
     y= 300;
     c = color(50, 255, 255);
     strokeWeight(6);
-    bg = false;
+    bg = true;
+    bl = false; 
   }
 
   void run() {
@@ -80,16 +81,26 @@ class Mese extends Animacio {
     }
 
     if (buttonR[5]) {
-      bg = true;
+      bg = false;
     }else{
-      bg=false;
+      bg=true;
     }
+    
+    if (buttonS[6]) {
+      type=0;
+      frameCount = 0;
+    }
+    
   }
 
   void display() {
     noStroke();
-
-
+    
+    if(type== 0){
+      fill(245, frameCount);
+      rect(0, 0, width, height);
+    }
+  
     if (!bg) {
       fill(c, 50);
       rect(0, 0, width, height);
@@ -109,6 +120,8 @@ class Mese extends Animacio {
       radi = map(slider[3], 0, 127, 50, 200);
       dobleArcs(kickSize);
     }
+    
+   
   }
 
 
@@ -157,4 +170,5 @@ class Mese extends Animacio {
     }
     return relleno;
   }
+  
 }

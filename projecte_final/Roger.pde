@@ -22,21 +22,23 @@ class Roger extends Animacio {
       par.get(i).moveto(points.get(i), 4);
     }
     frameRate(30);
+    background(255);
   }
 
   void run() {
-
   }
 
   void display() {
-    background(255);
-    for (particle a : par) {
-      a.compute();
-      a.display();
-    }
-    if (frameCount%4==0) {
-      duk();
-      //k=false;
+    if (frameRate>330) {
+      background(255);
+      for (particle a : par) {
+        a.compute();
+        a.display();
+      }
+      if (frameCount%4==0) {
+        duk();
+        //k=false;
+      }
     }
   }
 
