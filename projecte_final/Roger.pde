@@ -23,7 +23,7 @@ class Roger extends Animacio {
     for (int i = 0; i < points.size(); i++) {
       par.get(i).moveto(points.get(i), 4);
     }
-    frameRate(25);
+    frameRate(24);
     background(255);
   }
 
@@ -31,7 +31,7 @@ class Roger extends Animacio {
   }
 
   void display() {
-    if (frameCount>303) {
+    if (frameCount>304) {
       background(255);
       for (particle a : par) {
         a.compute();
