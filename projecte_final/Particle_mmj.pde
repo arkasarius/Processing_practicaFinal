@@ -27,7 +27,7 @@ class Particle_mmj {
     cparticle = 255;
   }
 
-  void move(float n) {
+  void move(int nx, int ny, float dy, float dx) {
 
     if (mode == 0) {
       posX=posX+velX;
@@ -43,16 +43,16 @@ class Particle_mmj {
       velY = newVY*type;
     }
 
-    if (posY <= (float)0-height/n) {
-      posY = (float)height+height/n;
-    } else if (posY >= (float)height+height/n) {
-      posY = (float)-height/n;
+    if (posY < -dy) {
+      posY = height+(float)height/8;
+    } else if (posY > height+(float)height/8) {
+      posY = -(float)height/8;
     }
 
-    if (posX <= (float)0-width/n) {
-      posX = (float)width+width/n;
-    } else if (posX >= (float)width+width/n) {
-      posX = (float)-width/n;
+    if (posX <= -(float)width/(n-1)) {
+      posX = width+(float)width/(n-1);
+    } else if (posX >= width+(float)width/(n-1)) {
+      posX = -(float)width/(n-1);
     }
   }
 
