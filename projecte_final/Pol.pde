@@ -12,29 +12,30 @@ class Pol extends Animacio {
     img = loadImage("imgPol.jpg");
     reset();
     startTime = millis();
+    pushMatrix();
   }
 
   void reset() {
     nw = new Network();
     img.loadPixels();
     for (int i=0; i<numNodes; i++) {
-      color imgc = img.pixels[(int)random(0, img.width*img.height-1)];
       float maxR = dist(0, 0, 0.5*width, 0.5*height);
       float r = 0.9*0.5*height * sqrt(random(1.0));
       float a = random(TAU);
-      nw.addNode(0.5*width + r*cos(a), 0.5*height + r*sin(a), 0, false, imgc);
+      float x = 0.5*width + r*cos(a);
+      float y = 0.5*height + r*sin(a);
+      color imgc = img.pixels[floor(random(0, img.width*img.height-1))];
+      nw.addNode(x, y, 0, false, imgc);
     }
     nw.connectAll();
     //song.skip(50000);
+    //song.skip(175000);
   }
 
   void display() {
-    int myMillis = millis()-startTime;
+    int myMillis = millis() - startTime;
 
     background(0);
-
-    //fill(0, 100);
-    //rect(0, 0, width, height);
 
     translate(width/2, height/2);
     rotate(millis()/30000.0);
@@ -53,6 +54,7 @@ class Pol extends Animacio {
 
     if (song.position() > 187900) {
       song.pause();
+      popMatrix();
       animationOn = false;
     }
 
