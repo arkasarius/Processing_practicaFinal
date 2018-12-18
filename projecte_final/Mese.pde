@@ -14,6 +14,7 @@ class Mese extends Animacio {
   }
 
   void reset() {
+    rectMode(CORNER);
     walkingClub = new ArrayList<Walker_mgd>(); 
     kickSize = snareSize = hatSize = 32;
     x= 400; 
