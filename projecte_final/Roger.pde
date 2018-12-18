@@ -8,6 +8,8 @@ class Roger extends Animacio {
   }
 
   void reset() {
+    frameCount=0;
+    number=1;
     String[] lines = loadStrings("1.txt");
     for (int i = 0; i < lines.length; i=i+11) {// 11 es estable
       String[] parts = lines[i].split(":");
@@ -21,7 +23,7 @@ class Roger extends Animacio {
     for (int i = 0; i < points.size(); i++) {
       par.get(i).moveto(points.get(i), 4);
     }
-    frameRate(30);
+    frameRate(25);
     background(255);
   }
 
@@ -29,7 +31,7 @@ class Roger extends Animacio {
   }
 
   void display() {
-    if (frameCount>390) {
+    if (frameCount>303) {
       background(255);
       for (particle a : par) {
         a.compute();
