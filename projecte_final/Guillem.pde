@@ -16,7 +16,7 @@ class Guillem extends Animacio{
   }
   
   void display(){
-    background(0);
+    /*background(0);
     rectMode(CENTER);
     pushMatrix();
     translate(width/2,height/2);
@@ -27,6 +27,6 @@ class Guillem extends Animacio{
     beat.detect(song.mix);
     if (beat.isOnset()){
     //cridar funcio
-    }
+    }*/
   }
 }
