@@ -86,7 +86,7 @@ class Mese extends Animacio {
       bg=true;
     }
     
-    if (buttonS[6]) {
+    if (buttonS[5]) {
       type=0;
       frameCount = 0;
     }
