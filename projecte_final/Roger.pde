@@ -29,7 +29,7 @@ class Roger extends Animacio {
   }
 
   void display() {
-    if (frameRate>330) {
+    if (frameCount>390) {
       background(255);
       for (particle a : par) {
         a.compute();
