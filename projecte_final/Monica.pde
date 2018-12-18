@@ -1,8 +1,11 @@
 class Monica extends Animacio {
   ArrayList<Particle_mmj> particleList;
-  float n;
   float x;
   float y;
+  float dx;
+  float dy;
+  int nx;
+  int ny;
   int tipus;
   float snareSize;
   color boletes;
@@ -20,29 +23,33 @@ class Monica extends Animacio {
 
   void reset() {
     particleList = new ArrayList<Particle_mmj>();
-    n = 15;
     x = 0;
     y = 0;
+    nx=16;
+    ny=8;
+    dx=width/(nx-1);
+    dy=height/(ny-1);
+    
+    
     tipus = 1;
     background(bgColor);
     red = green = blue = bgColor;
     x = 0;
     y = 0;
     limits = 5;
-   fade = 255;
-   canFade = false;
+    fade = 0;
+    canFade = false;
 
-
-
-    for (int i = 0; i<width; i++) {
-      for (int j = 0; j<n+1; j++) {
+    for (int i = 0; i<ny; i++) {
+      for (int j = 0; j<nx; j++) {
         particleList.add(new Particle_mmj(x, y, tipus));
-        x += (float)width/(n-1);
+        x += dx;
         tipus = -tipus;
       }
-      x = 0;
-      y += (float)height/7;
+     x = 0;
+     y += dy;
     }
+println(particleList.size());
     snareSize = 16;
   }
 
@@ -119,37 +126,32 @@ class Monica extends Animacio {
   void display() {
     bgColor = color(red, green, blue);
     background(bgColor);
-    fill(bgColor,80);
-    rect(0,0,width,height);
- 
+    fill(bgColor, 80);
+    rect(0, 0, width, height);
 
-    for (int i = 0; i< width/n; i++) {
+
+    for (int i = 0; i< particleList.size(); i++) {
       Particle_mmj p = particleList.get(i);
-      p.move(n);
+      p.move(nx,ny,dy,dx);
       p.display(snareSize);
     }
-    
-    if(canFade == true){
-     rectMode(CORNER);
-     fill(0,0,0,fade);
-     rect(0,0,width, height);
-     fade+=2;
-     }
+
+    if (canFade == true) {
+      rectMode(CORNER);
+      fill(0, 0, 0, fade);
+      rect(0, 0, width, height);
+      fade+=2;
+    }
   }
 
 
   void f_keyPressed() {
     switch(keyCode) {
-      
     case 'f':
-       case 'F':
-       canFade = true;
-       break;
-       case 'p': 
-       case 'P':
-       println(width + " "+height);
-        break; 
-  }
-    
+    case 'F':
+      canFade = true;
+      break;
+
+    }
   }
 }
