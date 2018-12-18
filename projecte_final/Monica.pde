@@ -11,8 +11,10 @@ class Monica extends Animacio {
   color boletes;
   float red, green, blue;
   float limits;
-  float fade;
-  boolean canFade;
+  float fadeOut;
+  boolean canFadeOut;
+  float fadeIn;
+  boolean canFadeIn;
 
 
   Monica(String nameSong) {
@@ -37,8 +39,10 @@ class Monica extends Animacio {
     x = 0;
     y = 0;
     limits = 5;
-    fade = 0;
-    canFade = false;
+    fadeOut = 0;
+    canFadeOut = false;
+    fadeIn = 255;
+    canFadeIn = true;
 
     for (int i = 0; i<ny; i++) {
       for (int j = 0; j<nx; j++) {
@@ -136,12 +140,23 @@ println(particleList.size());
       p.display(snareSize);
     }
 
-    if (canFade == true) {
+    if (canFadeOut == true) {
       rectMode(CORNER);
-      fill(0, 0, 0, fade);
+      fill(0, 0, 0, fadeOut);
       rect(0, 0, width, height);
-      fade+=2;
+      fadeOut+=2;
     }
+    
+    if (canFadeIn == true) {
+      rectMode(CORNER);
+      fill(0, 0, 0, fadeIn);
+      rect(0, 0, width, height);
+      fadeIn-=2;
+      if(fadeIn <= 0){
+        canFadeIn = false;
+    }
+    
+  }
   }
 
 
@@ -149,7 +164,7 @@ println(particleList.size());
     switch(keyCode) {
     case 'f':
     case 'F':
-      canFade = true;
+      canFadeOut = true;
       break;
 
     }

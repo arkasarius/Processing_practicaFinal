@@ -43,16 +43,16 @@ class Particle_mmj {
       velY = newVY*type;
     }
 
-    if (posY < -dy) {
-      posY = height+(float)height/8;
-    } else if (posY > height+(float)height/8) {
-      posY = -(float)height/8;
+    if (posY <= -dy) {
+      posY = posY+dy*ny;
+    } else if (posY >= height+dy) {
+      posY = posY-dy*ny;
     }
 
-    if (posX <= -(float)width/(n-1)) {
-      posX = width+(float)width/(n-1);
-    } else if (posX >= width+(float)width/(n-1)) {
-      posX = -(float)width/(n-1);
+    if (posX <= dx) {
+      posX = posX+dx*nx;
+    } else if (posX >= width+dx) {
+      posX = posX-dx*nx;
     }
   }
 
