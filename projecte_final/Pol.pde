@@ -1,17 +1,20 @@
 class Pol extends Animacio {
 
   Network nw;
-  int numNodes = 1000;
+  int numNodes = 1500;
   PImage img;
   int startTime = 0;
+  boolean first = true;
+  int songEnd = (1*60+52)*1000; //(2*60+30)*1000; //187900;
+  int songEndStart = songEnd - 5000;
 
   Pol(String nameSong) {
     super(nameSong);
-    song.play();
     fft = new FFT( song.bufferSize(), song.sampleRate() );
     img = loadImage("imgPol.jpg");
     reset();
     startTime = millis();
+    song.play();
   }
 
   void reset() {
@@ -22,10 +25,11 @@ class Pol extends Animacio {
       float maxR = dist(0, 0, 0.5*width, 0.5*height);
       float r = 0.9*0.5*height * sqrt(random(1.0));
       float a = random(TAU);
-      nw.addNode(0.5*width + r*cos(a), 0.5*height + r*sin(a), 0, false, imgc);
+      nw.addNode(0.5*width + r*cos(a), 0.5*height + r*sin(a), 0, imgc);
     }
     nw.connectAll();
-    //song.skip(50000);
+    //song.skip(70000);
+    pushMatrix();
   }
 
   void display() {
@@ -38,31 +42,45 @@ class Pol extends Animacio {
 
     translate(width/2, height/2);
     rotate(millis()/30000.0);
-    //scale(min(myMillis/70000.0 + 0.2, 1.0));
+    scale(min(myMillis/70000.0 + 0.2, 1.0));
     translate(-width/2, -height/2);
 
     nw.advect();
     nw.damp();
 
     nw.move(true);
-    nw.display();
+    nw.update();
+    nw.displayNodes();
+    
+    if (song.position() > 75000) {
+      float opacity = min((song.position() - 75000)/10000.0, 1.0);
+      nw.displayLinks(opacity);
+    }
 
     if (song.position() > 56000) {
       nw.displayColor = true;
     }
 
-    if (song.position() > 187900) {
+    if (song.position() > songEndStart) {
+      float f = map(song.position(), songEndStart, songEnd, 0, 255);
+      fill(0, f);
+      noStroke();
+      float maxR = dist(0, 0, 0.5*width, 0.5*height);
+      ellipse(0.5*width, 0.5*height, 2.0*maxR, 2.0*maxR);
+
+      if (first) {
+        song.shiftGain(0.0, -20.0, songEnd - songEndStart);
+        first = false;
+      }
+    }
+
+    if (song.position() > songEnd) {
       song.pause();
       animationOn = false;
+      popMatrix();
     }
 
-    if (song.position() > 180000) {
-      float f = map(song.position(), 180000, 187900, 0, 255);
-      fill(0, f);
-      rect(0, 0, width, height);
-    }
-
-    //println(frameRate);
+    println(frameRate);
   }
 }
 
@@ -74,8 +92,8 @@ class Network {
     nodes = new ArrayList<Node>();
   }
 
-  void addNode(float x, float y, float s, boolean isFixed, color c) {
-    nodes.add(new Node(x, y, s, isFixed, c));
+  void addNode(float x, float y, float s, color c) {
+    nodes.add(new Node(x, y, s, c));
   }
 
   void connectNodes(Node a, Node b) {
@@ -118,8 +136,7 @@ class Network {
     }
   }
 
-  void display() {
-    // FFT display
+  void update() {
     float freqThreshold = 5; //15
     fft.forward( song.mix );
     IntList topFreq = new IntList();
@@ -132,24 +149,11 @@ class Network {
     float songLevel = song.mix.level();
     for (int i : topFreq) {
       int idx = (int)map(i, 0, 1024, 0, nodes.size());
-      nodes.get(idx).setVal(min(5*songLevel, 0.999));
+      nodes.get(idx).setVal(min(5*songLevel, 0.99));
     }
+  }
 
-    // Display links
-    for (Node n : nodes) {
-      for (Node o : n.coNodes) {
-        float val = (n.val + o.val)/2;
-        if (displayColor) {
-          stroke(lerpColor(n.col, o.col, 0.5), 255*val);
-        } else {
-          stroke(255, 255*val);
-        }
-
-        line(n.p.x, n.p.y, o.p.x, o.p.y);
-      }
-    }
-
-    // Display nodes
+  void displayNodes() {
     noStroke();
     for (Node n : nodes) {
       float val = n.val;
@@ -161,6 +165,21 @@ class Network {
       }
 
       ellipse(n.p.x, n.p.y, n.val*15, n.val*15);
+    }
+  }
+
+  void displayLinks(float opacityMult) {
+    for (Node n : nodes) {  
+      for (Node o : n.coNodes) {
+        float val = (n.val + o.val)/2;
+        if (displayColor) {
+          stroke(lerpColor(n.col, o.col, 0.5), 255*val*opacityMult);
+        } else {
+          stroke(255, 255*val*opacityMult);
+        }
+
+        line(n.p.x, n.p.y, o.p.x, o.p.y);
+      }
     }
   }
 
@@ -199,7 +218,7 @@ class Node {
   float kad = 0.2;
   float kda = 0.1;
 
-  Node(float x, float y, float value, boolean isFixed, color c) {
+  Node(float x, float y, float value, color c) {
     val = value;
     val_1 = value;
     p0 = new PVector(x, y);
