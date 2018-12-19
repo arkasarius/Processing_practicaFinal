@@ -3,7 +3,6 @@ class Roger extends Animacio {
   Roger(String nameSong) {
     super(nameSong);
     reset();  
-
     song.play();
   }
 
@@ -25,6 +24,8 @@ class Roger extends Animacio {
     }
     frameRate(24);
     background(255);
+    PImage img = loadImage("portada.jpg");
+    image(img, 0, 0);
   }
 
   void run() {
@@ -39,7 +40,6 @@ class Roger extends Animacio {
       }
       if (frameCount%4==0) {
         duk();
-        //k=false;
       }
     }
   }
